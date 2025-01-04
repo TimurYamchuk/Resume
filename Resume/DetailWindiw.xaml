@@ -1,0 +1,74 @@
+<Window x:Class="Resume.DetailWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Просмотр резюме"
+        Height="400" Width="600"
+        WindowStartupLocation="CenterScreen"
+        Background="Blue" Foreground="White" ResizeMode="NoResize">
+
+    <Grid Margin="10">
+        <!-- Основные колонки -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Основные строки -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Информация о резюме -->
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" HorizontalAlignment="Stretch">
+            <TextBlock Text="Детали резюме" FontSize="18" FontWeight="Bold" Margin="0,5"/>
+
+            <WrapPanel HorizontalAlignment="Stretch" Margin="0,5">
+                <!-- ФИО -->
+                <StackPanel Margin="5">
+                    <TextBlock Text="ФИО:"/>
+                    <TextBlock Text="{Binding Resume.UserFullName}" />
+                </StackPanel>
+
+                <!-- Возраст -->
+                <StackPanel Margin="5">
+                    <TextBlock Text="Возраст:"/>
+                    <TextBlock Text="{Binding Resume.UserAge}" />
+                </StackPanel>
+            </WrapPanel>
+
+            <WrapPanel HorizontalAlignment="Stretch" Margin="0,5">
+                <!-- Адрес -->
+                <StackPanel Margin="5">
+                    <TextBlock Text="Адрес:"/>
+                    <TextBlock Text="{Binding Resume.UserAddress}" />
+                </StackPanel>
+
+                <!-- E-mail -->
+                <StackPanel Margin="5">
+                    <TextBlock Text="E-mail:"/>
+                    <TextBlock Text="{Binding Resume.UserEmail}" />
+                </StackPanel>
+            </WrapPanel>
+
+            <!-- Статус -->
+            <StackPanel Margin="5">
+                <TextBlock Text="Статус:"/>
+                <TextBlock Text="{Binding Resume.MaritalStat}" />
+            </StackPanel>
+
+            <!-- Навыки -->
+            <StackPanel Margin="5">
+                <TextBlock Text="Навыки:"/>
+                <TextBlock Text="{Binding Resume.UserSkills}" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Кнопки действия -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Закрыть" Width="120" Margin="5" Command="{Binding CloseCommand}" Background="DarkSalmon" Foreground="Black" FontWeight="Bold"/>
+        </StackPanel>
+    </Grid>
+</Window>

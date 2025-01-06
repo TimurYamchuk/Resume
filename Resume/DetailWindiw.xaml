@@ -1,19 +1,18 @@
 <Window x:Class="Resume.DetailWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ïðîñìîòð ðåçþìå"
         Height="400" Width="600"
         WindowStartupLocation="CenterScreen"
         Background="Blue" Foreground="White" ResizeMode="NoResize">
 
     <Grid Margin="10">
-        <!-- Îñíîâíûå êîëîíêè -->
+        <!-- ÐžÑÐ½Ð¾Ð²Ð½Ñ‹Ðµ ÐºÐ¾Ð»Ð¾Ð½ÐºÐ¸ -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Îñíîâíûå ñòðîêè -->
+        <!-- ÐžÑÐ½Ð¾Ð²Ð½Ñ‹Ðµ ÑÑ‚Ñ€Ð¾ÐºÐ¸ -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -21,28 +20,28 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Èíôîðìàöèÿ î ðåçþìå -->
+        <!-- Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ Ð¾ Ñ€ÐµÐ·ÑŽÐ¼Ðµ -->
         <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" HorizontalAlignment="Stretch">
-            <TextBlock Text="Äåòàëè ðåçþìå" FontSize="18" FontWeight="Bold" Margin="0,5"/>
+            <TextBlock Text="Ð”ÐµÑ‚Ð°Ð»Ð¸ Ñ€ÐµÐ·ÑŽÐ¼Ðµ" FontSize="18" FontWeight="Bold" Margin="0,5"/>
 
             <WrapPanel HorizontalAlignment="Stretch" Margin="0,5">
-                <!-- ÔÈÎ -->
+                <!-- Ð¤Ð˜Ðž -->
                 <StackPanel Margin="5">
-                    <TextBlock Text="ÔÈÎ:"/>
+                    <TextBlock Text="Ð¤Ð˜Ðž:"/>
                     <TextBlock Text="{Binding Resume.UserFullName}" />
                 </StackPanel>
 
-                <!-- Âîçðàñò -->
+                <!-- Ð’Ð¾Ð·Ñ€Ð°ÑÑ‚ -->
                 <StackPanel Margin="5">
-                    <TextBlock Text="Âîçðàñò:"/>
+                    <TextBlock Text="Ð’Ð¾Ð·Ñ€Ð°ÑÑ‚:"/>
                     <TextBlock Text="{Binding Resume.UserAge}" />
                 </StackPanel>
             </WrapPanel>
 
             <WrapPanel HorizontalAlignment="Stretch" Margin="0,5">
-                <!-- Àäðåñ -->
+                <!-- ÐÐ´Ñ€ÐµÑ -->
                 <StackPanel Margin="5">
-                    <TextBlock Text="Àäðåñ:"/>
+                    <TextBlock Text="ÐÐ´Ñ€ÐµÑ:"/>
                     <TextBlock Text="{Binding Resume.UserAddress}" />
                 </StackPanel>
 
@@ -53,22 +52,22 @@
                 </StackPanel>
             </WrapPanel>
 
-            <!-- Ñòàòóñ -->
+            <!-- Ð¡Ñ‚Ð°Ñ‚ÑƒÑ -->
             <StackPanel Margin="5">
-                <TextBlock Text="Ñòàòóñ:"/>
+                <TextBlock Text="Ð¡Ñ‚Ð°Ñ‚ÑƒÑ:"/>
                 <TextBlock Text="{Binding Resume.MaritalStat}" />
             </StackPanel>
 
-            <!-- Íàâûêè -->
+            <!-- ÐÐ°Ð²Ñ‹ÐºÐ¸ -->
             <StackPanel Margin="5">
-                <TextBlock Text="Íàâûêè:"/>
+                <TextBlock Text="ÐÐ°Ð²Ñ‹ÐºÐ¸:"/>
                 <TextBlock Text="{Binding Resume.UserSkills}" />
             </StackPanel>
         </StackPanel>
 
-        <!-- Êíîïêè äåéñòâèÿ -->
+        <!-- ÐšÐ½Ð¾Ð¿ÐºÐ¸ Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ -->
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-            <Button Content="Çàêðûòü" Width="120" Margin="5" Command="{Binding CloseCommand}" Background="DarkSalmon" Foreground="Black" FontWeight="Bold"/>
+            <Button Content="Ð—Ð°ÐºÑ€Ñ‹Ñ‚ÑŒ" Width="120" Margin="5" Command="{Binding CloseCommand}" Background="DarkSalmon" Foreground="Black" FontWeight="Bold"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Runtime.CompilerServices;
-using Resume;
 
 namespace Resume
 {
@@ -24,19 +23,17 @@ namespace Resume
 
         private bool _skillCSharp, _skillJava, _skillPython, _skillSql, _skillHtml, _skillCss, _skillGit, _skillDocker, _skillScrum, _skillEnglish;
 
+        private ResumeModel? _selectedResume;
 
-        private ResumeModel _selectedResume;
-
-        public ObservableCollection<ResumeModel> AllResumes { get; set; } = new ObservableCollection<ResumeModel>();
-
-        public ObservableCollection<string> MaritalStatuses { get; } = new ObservableCollection<string>
+        public ObservableCollection<ResumeModel> AllResumes { get; } = new();
+        public ObservableCollection<string> MaritalStatuses { get; } = new()
         {
-            "Холост/Холоста",
+            "Холост(а)",
             "Женат/Замужем",
-            "Разведён/Разведена"
+            "Разведён(а)"
         };
 
-        public ResumeModel SelectedResume
+        public ResumeModel? SelectedResume
         {
             get => _selectedResume;
             set { _selectedResume = value; OnPropertyChanged(); }
@@ -47,7 +44,7 @@ namespace Resume
             get => _userNameInput;
             set
             {
-                if (value != null && Regex.Replace(value, @"[^a-zA-Zа-яА-ЯёЁ\s\-]+", "") != value) return;
+                if (value != null && !Regex.IsMatch(value, @"^[a-zA-Zа-яА-ЯёЁ\s\-]*$")) return;
                 _userNameInput = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CanAddResume));
@@ -59,7 +56,7 @@ namespace Resume
             get => _userAgeInput;
             set
             {
-                if (!Regex.IsMatch(value ?? "", @"^\d{0,2}$")) return;
+                if (!Regex.IsMatch(value ?? string.Empty, @"^\d{0,2}$")) return;
                 _userAgeInput = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CanAddResume));
@@ -84,7 +81,6 @@ namespace Resume
             set { _chosenMaritalStatus = value; OnPropertyChanged(); OnPropertyChanged(nameof(CanAddResume)); }
         }
 
-        // Навыки
         public bool SkillCSharp { get => _skillCSharp; set { _skillCSharp = value; OnPropertyChanged(); } }
         public bool SkillJava { get => _skillJava; set { _skillJava = value; OnPropertyChanged(); } }
         public bool SkillPython { get => _skillPython; set { _skillPython = value; OnPropertyChanged(); } }
@@ -96,26 +92,18 @@ namespace Resume
         public bool SkillScrum { get => _skillScrum; set { _skillScrum = value; OnPropertyChanged(); } }
         public bool SkillEnglish { get => _skillEnglish; set { _skillEnglish = value; OnPropertyChanged(); } }
 
-        // Условие, можно ли добавить
-        public bool CanAddResume
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(UserNameInput)
-                       && int.TryParse(UserAgeInput, out int ageNum) && ageNum >= 1 && ageNum <= 99
-                       && !string.IsNullOrEmpty(ChosenMaritalStatus)
-                       && !string.IsNullOrWhiteSpace(UserAddressInput)
-                       && !string.IsNullOrWhiteSpace(UserEmailInput);
-            }
-        }
+        public bool CanAddResume =>
+            !string.IsNullOrWhiteSpace(UserNameInput) &&
+            int.TryParse(UserAgeInput, out var ageNum) && ageNum is >= 1 and <= 99 &&
+            !string.IsNullOrEmpty(ChosenMaritalStatus) &&
+            !string.IsNullOrWhiteSpace(UserAddressInput) &&
+            !string.IsNullOrWhiteSpace(UserEmailInput);
 
-        // Команды
         public ICommand AddResumeCmd { get; }
         public ICommand ClearInputsCmd { get; }
         public ICommand ShowResumeCmd { get; }
         public ICommand DeleteSelectedCmd { get; }
 
-        // Конструктор
         public MainVM()
         {
             AddResumeCmd = new RelayCmd(_ => AddResume(), _ => CanAddResume);
@@ -130,11 +118,10 @@ namespace Resume
         {
             try
             {
-                int age = int.TryParse(UserAgeInput, out int parsedAge) ? parsedAge : 0;
+                int.TryParse(UserAgeInput, out var age);
                 var skillList = CollectSkills();
 
-                // Создаем новую модель
-                var newR = new ResumeModel
+                var newResume = new ResumeModel
                 {
                     UserFullName = UserNameInput.Trim(),
                     UserAge = age,
@@ -144,12 +131,8 @@ namespace Resume
                     UserSkills = string.Join(",", skillList)
                 };
 
-                // Добавляем в коллекцию
-                AllResumes.Add(newR);
-                // Добавляем в файл (дозапись)
-                AppendToFile(newR);
-
-                // Сброс
+                AllResumes.Add(newResume);
+                AppendToFile(newResume);
                 ClearInputs();
             }
             catch (Exception ex)
@@ -208,11 +191,11 @@ namespace Resume
 
                 var lines = File.ReadAllLines(ResumesFileName);
                 AllResumes.Clear();
-                foreach (var ln in lines)
+                foreach (var line in lines)
                 {
-                    var obj = ResumeModel.FromLine(ln);
-                    if (obj != null)
-                        AllResumes.Add(obj);
+                    var resume = ResumeModel.FromLine(line);
+                    if (resume != null)
+                        AllResumes.Add(resume);
                 }
             }
             catch (Exception ex)
@@ -221,14 +204,12 @@ namespace Resume
             }
         }
 
-        private void AppendToFile(ResumeModel r)
+        private void AppendToFile(ResumeModel resume)
         {
             try
             {
-                using (var writer = new StreamWriter(ResumesFileName, true))
-                {
-                    writer.WriteLine(r.ToString());
-                }
+                using var writer = new StreamWriter(ResumesFileName, true);
+                writer.WriteLine(resume.ToString());
             }
             catch (Exception ex)
             {
@@ -240,12 +221,10 @@ namespace Resume
         {
             try
             {
-                using (var writer = new StreamWriter(ResumesFileName, false))
+                using var writer = new StreamWriter(ResumesFileName, false);
+                foreach (var resume in AllResumes)
                 {
-                    foreach (var r in AllResumes)
-                    {
-                        writer.WriteLine(r.ToString());
-                    }
+                    writer.WriteLine(resume.ToString());
                 }
             }
             catch (Exception ex)
@@ -256,25 +235,25 @@ namespace Resume
 
         private List<string> CollectSkills()
         {
-            var skillList = new List<string>();
-            if (SkillCSharp) skillList.Add("CSharp");
-            if (SkillJava) skillList.Add("Java");
-            if (SkillPython) skillList.Add("Python");
-            if (SkillSql) skillList.Add("SQL");
-            if (SkillHtml) skillList.Add("HTML");
-            if (SkillCss) skillList.Add("CSS");
-            if (SkillGit) skillList.Add("Git");
-            if (SkillDocker) skillList.Add("Docker");
-            if (SkillScrum) skillList.Add("Scrum");
-            if (SkillEnglish) skillList.Add("English");
-            return skillList;
+            var skills = new List<string>();
+            if (SkillCSharp) skills.Add("CSharp");
+            if (SkillJava) skills.Add("Java");
+            if (SkillPython) skills.Add("Python");
+            if (SkillSql) skills.Add("SQL");
+            if (SkillHtml) skills.Add("HTML");
+            if (SkillCss) skills.Add("CSS");
+            if (SkillGit) skills.Add("Git");
+            if (SkillDocker) skills.Add("Docker");
+            if (SkillScrum) skills.Add("Scrum");
+            if (SkillEnglish) skills.Add("English");
+            return skills;
         }
 
-        // INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

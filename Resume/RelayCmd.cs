@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Input;
 
 namespace Resume
@@ -14,7 +14,7 @@ namespace Resume
             _canExecute = canExecute;
         }
 
-        public bool CanExecute(object parameter) => _canExecute?.Invoke(parameter) ?? true;
+        public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
 
         public void Execute(object parameter) => _execute(parameter);
 
